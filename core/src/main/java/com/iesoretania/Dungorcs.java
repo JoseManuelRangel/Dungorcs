@@ -37,8 +37,8 @@ public class Dungorcs extends ApplicationAdapter {
 		stage = new Stage();
 		map = new TmxMapLoader().load("mapa_dungorcs.tmx");
 
+		paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
 		protagonista = new Demonic(map);
-		protagonista.setPosition(150, 1100);
 
 		MapProperties properties = map.getProperties();
 		int tileWidth = properties.get("tilewidth", Integer.class);
@@ -50,13 +50,12 @@ public class Dungorcs extends ApplicationAdapter {
 		mapHeightInPixels = mapHeightInTiles * tileHeight;
 		mapRenderer = new OrthogonalTiledMapRenderer(map);
 
-		paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
-
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 600);
 
 		Viewport viewport = new ScreenViewport(camera);
 		stage.setViewport(viewport);
+
 
 		offsetX = 0;
 		offsetY = 0;
@@ -64,7 +63,6 @@ public class Dungorcs extends ApplicationAdapter {
 		stage.addActor(protagonista);
 		Gdx.input.setInputProcessor(stage);
 		stage.setKeyboardFocus(protagonista);
-
 	}
 
 	@Override
@@ -72,21 +70,21 @@ public class Dungorcs extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		/*if(protagonista.getX() > (offsetX + camera.viewportWidth) * 0.7) {
-			offsetX += 100 * Gdx.graphics.getDeltaTime();
-		}
-
-		if(protagonista.getX() < (offsetX + 0.3 * camera.viewportWidth)) {
+		if(protagonista.getX() < camera.position.x - camera.viewportWidth / 2 + 100 && offsetX > 0) {
 			offsetX -= 100 * Gdx.graphics.getDeltaTime();
 		}
 
-		if(protagonista.getY() - 1100 < (offsetY + 0.3 * camera.viewportWidth)) {
+		if(protagonista.getX() + protagonista.getWidth() > camera.position.x + camera.viewportWidth / 2 - 100 && offsetX < mapWidthInPixels - camera.viewportWidth) {
+			offsetX += 100 * Gdx.graphics.getDeltaTime();
+		}
+
+		if(protagonista.getY() < camera.position.y - camera.viewportHeight / 2 + 100 && offsetY > -mapHeightInPixels + camera.viewportHeight) {
 			offsetY -= 100 * Gdx.graphics.getDeltaTime();
 		}
 
-		if(protagonista.getY() - 1100 > (offsetY + 0.7 * camera.viewportWidth)) {
+		if(protagonista.getY() + protagonista.getHeight() > camera.position.y + camera.viewportHeight / 2 - 100 && offsetY < 0) {
 			offsetY += 100 * Gdx.graphics.getDeltaTime();
-		}*/
+		}
 
 
 		if(offsetX < 0) {
@@ -128,7 +126,6 @@ public class Dungorcs extends ApplicationAdapter {
 		camera.setToOrtho(false, width, height);
 		camera.position.x = camera.viewportWidth / 2 + offsetX;
 		camera.position.y = mapHeightInPixels - camera.viewportHeight / 2 + offsetY;
-
 		camera.update();
 	}
 
@@ -136,5 +133,6 @@ public class Dungorcs extends ApplicationAdapter {
 	public void dispose() {
 		stage.dispose();
 		map.dispose();
+		mapRenderer.dispose();
 	}
 }

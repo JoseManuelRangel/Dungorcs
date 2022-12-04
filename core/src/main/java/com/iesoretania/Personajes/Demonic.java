@@ -6,31 +6,81 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 public class Demonic extends Actor {
+    /**
+     * VerticalMovement: Control de movimiento vertical.
+     * HorizontalMovement: Control de movimiento horizontal.
+     * AttackMovement: Control de movimiento al atacar.
+     */
     enum VerticalMovement { UP, NONE, DOWN };
     enum HorizontalMovement { LEFT, NONE, RIGHT };
-    enum BiteMovement { BITTING, NONE };
-    float statetime, collisionX, collisionY;
-
-    private static TextureRegion demonicReposo;
-    private static TextureRegion demonicCamina1, demonicCome1, demonicCome2, demonicCome3;
-
+    enum AttackMovement { BITTING, NONE };
     HorizontalMovement horizontalMovement;
     VerticalMovement verticalMovement;
-    BiteMovement biteMovement;
+    AttackMovement attackMovement;
+
+    /**
+     * statetime: Tiempo que tardará la animación en cuestión en realizarse.
+     *
+     * Colisiones:
+     * CAPA PAREDES - Posición en el que Demonic chocará con un objeto de la capa Paredes
+     * collisionParedesX: Eje x.
+     * collisionParedesY: Eje y.
+     *
+     * estaAtacando: Variable booleana que controlará si el personaje se encuentra en estado de ataque o no.
+     */
+    float statetime;
+    float collisionParedesX, collisionParedesY;
+    public static boolean estaAtacando = false;
+
+
+    /**
+     * TextureRegion de los distintos estados de Demonic.
+     */
+    private static TextureRegion demonicReposo;
+    private static TextureRegion demonicCamina1;
+    private static TextureRegion demonicCome1, demonicCome2, demonicCome3;
+
+    /**
+     * reaparicion: Variable que controlará la posición en el eje x e y del punto de spawn del personaje.
+     * actual: Region de texturas utilizada en cada momento por Demonic.
+     * paredes: Variable que obtendrá la capa "Paredes" del tilemap.
+     * mapa: Variable que contendrá el mapa.
+     * posicion: Variable que obtendrá la capa de objetos "Objetos" del tilemap.
+     * puntoreaparicion: Variable que obtendrá el objeto de reaparición asignado en el tilemap dentro de la capa "Objetos".
+     */
     TextureRegion actual;
     TiledMapTileLayer paredes;
+    TiledMap mapa;
+    Vector2 reaparicion;
+    MapLayer posicion;
+    MapObject puntoreaparicion;
 
+
+    /**
+     * animacionAndando: Animación de movimiento para Demonic.
+     * animacionMordiendo: Animación de ataque para Demonic.
+     */
     Animation<TextureRegion> animacionAndando, animacionMordiendo;
 
 
     public Demonic(TiledMap map) {
+        this.mapa = map;
+
+        /**
+         * Cargamos la textura completa del tileset usado, obtenemos la capa Paredes del mapa y definimos los TextureRegion
+         * que visualizarán el estado del personaje.
+         */
         Texture completo = new Texture(Gdx.files.internal("dungeon_tileset.png"));
         paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
 
@@ -40,6 +90,12 @@ public class Demonic extends Actor {
         demonicCome2 = new TextureRegion(completo, 212, 367, 23, 34);
         demonicCome3 = new TextureRegion(completo, 244, 372, 23, 28);
 
+        /**
+         * animacionAnda: Animacion de movimiento en el que le pondremos dos texturas distintas.
+         * animacionMuerde: Animación de ataque de Demonic.
+         *
+         * Después se meterán en un objeto de tipo Animation en el que se establecerá el tiempo que tardará en realizar la animación y el Array de TextureRegion que usará.
+         */
         TextureRegion[] animacionAnda = new TextureRegion[2];
         animacionAnda[0] = demonicReposo;
         animacionAnda[1] = demonicCamina1;
@@ -51,13 +107,26 @@ public class Demonic extends Actor {
 
         animacionAndando = new Animation<TextureRegion>(0.125f, animacionAnda);
         animacionMordiendo = new Animation<TextureRegion>(0.100f, animacionMuerde);
+
         statetime = 0f;
 
+        /**
+         * Al empezar tendrá la textura de reposo y no se moverá ni horizontal ni verticalmente. Tampoco empezará atacando.
+         */
         actual = demonicReposo;
         horizontalMovement = HorizontalMovement.NONE;
         verticalMovement = VerticalMovement.NONE;
-        biteMovement = BiteMovement.NONE;
+        attackMovement = AttackMovement.NONE;
 
+        /**
+         * Establecemos el punto de reaparición llamando al método creado más abajo llamado getAparicion().
+         */
+        reaparicion = getAparicion();
+
+        /**
+         * Tras obtener las coordenadas del punto de spawn le indicamos que reaparezca allí, le establecemos su tamaño y le añadimos el Escuchador para presionar el teclado.
+         */
+        setPosition(reaparicion.x, reaparicion.y);
         setSize(actual.getRegionWidth(), actual.getRegionHeight());
         addListener(new DemonicInputListener());
     }
@@ -73,9 +142,19 @@ public class Demonic extends Actor {
 
         statetime += Gdx.graphics.getDeltaTime();
 
-        collisionX = getX();
-        collisionY = getY();
+        /**
+         * Se coge las coordenadas del personaje para comprobar en cada momento si choca o no.
+         */
+        collisionParedesX = getX();
+        collisionParedesY = getY();
 
+        /**
+         * Movimiento para Demonic en función de la tecla pulsada en el teclado.
+         * UP:    Flecha direccional hacia arriba.
+         * DOWN:  Flecha direccional hacia abajo.
+         * LEFT:  Flecha direccional hacia la izquierda.
+         * RIGHT: Flecha direccional hacia la derecha.
+         */
         if(verticalMovement == VerticalMovement.UP) {
             this.moveBy(0, 100 * delta);
         }
@@ -92,6 +171,11 @@ public class Demonic extends Actor {
             this.moveBy(100 * delta, 0);
         }
 
+
+        /**
+         * Establece los límites de movimiento del personaje para que no se pueda salir de las
+         * coordenadas establecidas como límite.
+         */
         if(getX() < 0) {
             setX(0);
         }
@@ -108,11 +192,13 @@ public class Demonic extends Actor {
             setY(1250);
         }
 
+
         TiledMapTileLayer.Cell celda1 = paredes.getCell((int)getX()/16, (int)getY()/16);
         TiledMapTileLayer.Cell celda2 = paredes.getCell((int) (getX() + demonicReposo.getRegionWidth())/16, (int)(getY()/16));
 
+
         if(celda1 != null || celda2 != null) {
-            setPosition(collisionX, collisionY);
+            setPosition(collisionParedesX, collisionParedesY);
         }
 
         if(verticalMovement == VerticalMovement.UP || verticalMovement == VerticalMovement.DOWN) {
@@ -123,7 +209,7 @@ public class Demonic extends Actor {
             actual = animacionAndando.getKeyFrame(statetime, true);
         }
 
-        if(biteMovement == BiteMovement.BITTING) {
+        if(attackMovement == AttackMovement.BITTING) {
             actual = animacionMordiendo.getKeyFrame(statetime, true);
         }
     }
@@ -145,7 +231,8 @@ public class Demonic extends Actor {
                     horizontalMovement = HorizontalMovement.RIGHT;
                     break;
                 case Input.Keys.F:
-                    biteMovement = BiteMovement.BITTING;
+                    attackMovement = AttackMovement.BITTING;
+                    estaAtacando = true;
                     break;
             }
 
@@ -180,9 +267,10 @@ public class Demonic extends Actor {
                     }
                     break;
                 case Input.Keys.F:
-                    if(biteMovement == BiteMovement.BITTING) {
-                        biteMovement = BiteMovement.NONE;
+                    if(attackMovement == AttackMovement.BITTING) {
+                        attackMovement = AttackMovement.NONE;
                         actual = demonicReposo;
+                        estaAtacando = false;
                     }
             }
 
@@ -190,4 +278,14 @@ public class Demonic extends Actor {
         }
     }
 
+    private Vector2 getAparicion() {
+        posicion = mapa.getLayers().get("Objetos");
+        puntoreaparicion = posicion.getObjects().get("Spawn");
+
+        return new Vector2(puntoreaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoreaparicion.getProperties().get("y", Float.class));
+    }
+
+    public Rectangle getShape() {
+        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    }
 }
