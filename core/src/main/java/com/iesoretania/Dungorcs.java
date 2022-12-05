@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.iesoretania.Personajes.Demonic;
+import com.iesoretania.Personajes.Enemigo;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Dungorcs extends ApplicationAdapter {
@@ -28,7 +29,7 @@ public class Dungorcs extends ApplicationAdapter {
 	private int mapHeightInPixels;
 
 	TiledMapTileLayer paredes;
-	Actor protagonista;
+	Actor protagonista, enemy1, enemy2, enemy3, enemy4;
 
 	float offsetX, offsetY;
 
@@ -39,6 +40,12 @@ public class Dungorcs extends ApplicationAdapter {
 
 		paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
 		protagonista = new Demonic(map);
+		enemy1 = new Enemigo(map, 1);
+		enemy2 = new Enemigo(map, 2);
+		enemy3 = new Enemigo(map, 3);
+		enemy4 = new Enemigo(map, 4);
+
+
 
 		MapProperties properties = map.getProperties();
 		int tileWidth = properties.get("tilewidth", Integer.class);
@@ -61,6 +68,11 @@ public class Dungorcs extends ApplicationAdapter {
 		offsetY = 0;
 
 		stage.addActor(protagonista);
+		stage.addActor(enemy1);
+		stage.addActor(enemy2);
+		stage.addActor(enemy3);
+		stage.addActor(enemy4);
+		protagonista.toFront();
 		Gdx.input.setInputProcessor(stage);
 		stage.setKeyboardFocus(protagonista);
 	}
@@ -107,8 +119,8 @@ public class Dungorcs extends ApplicationAdapter {
 		camera.position.y = mapHeightInPixels - camera.viewportHeight / 2 + offsetY;
 		camera.update();
 
-		int[] layerAltura = {3};
-		int[] layerMapa = {0, 1, 2};
+		int[] layerAltura = {5};
+		int[] layerMapa = {0, 1, 2, 3, 4};
 
 		mapRenderer.setView(camera);
 		mapRenderer.render(layerMapa);

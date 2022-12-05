@@ -279,13 +279,13 @@ public class Demonic extends Actor {
     }
 
     private Vector2 getAparicion() {
-        posicion = mapa.getLayers().get("Objetos");
+        posicion = mapa.getLayers().get("Entidades");
         puntoreaparicion = posicion.getObjects().get("Spawn");
 
         return new Vector2(puntoreaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoreaparicion.getProperties().get("y", Float.class));
     }
 
     public Rectangle getShape() {
-        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+        return new Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
     }
 }
