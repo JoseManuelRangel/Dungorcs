@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public class Demonic extends Actor {
     /**
@@ -29,6 +30,8 @@ public class Demonic extends Actor {
     VerticalMovement verticalMovement;
     AttackMovement attackMovement;
 
+    Rectangle cuerpo;
+
     /**
      * statetime: Tiempo que tardará la animación en cuestión en realizarse.
      *
@@ -41,7 +44,7 @@ public class Demonic extends Actor {
      */
     float statetime;
     float collisionParedesX, collisionParedesY;
-    public static boolean estaAtacando = false;
+    public static boolean estaAtacando = false, retrocediendo = false, muerto = false;
 
 
     /**
@@ -60,7 +63,7 @@ public class Demonic extends Actor {
      * puntoreaparicion: Variable que obtendrá el objeto de reaparición asignado en el tilemap dentro de la capa "Objetos".
      */
     TextureRegion actual;
-    TiledMapTileLayer paredes;
+    TiledMapTileLayer paredes, pinchos;
     TiledMap mapa;
     Vector2 reaparicion;
     MapLayer posicion;
@@ -83,6 +86,9 @@ public class Demonic extends Actor {
          */
         Texture completo = new Texture(Gdx.files.internal("dungeon_tileset.png"));
         paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
+        pinchos = (TiledMapTileLayer) map.getLayers().get("Pinchos");
+
+        /*cuerpo = new Rectangle();*/
 
         demonicReposo = new TextureRegion(completo, 115, 372, 26, 29);
         demonicCamina1 = new TextureRegion(completo, 148, 369, 22, 28);
@@ -193,11 +199,10 @@ public class Demonic extends Actor {
         }
 
 
-        TiledMapTileLayer.Cell celda1 = paredes.getCell((int)getX()/16, (int)getY()/16);
+        TiledMapTileLayer.Cell celdapared = paredes.getCell((int)getX()/16, (int)getY()/16);
         TiledMapTileLayer.Cell celda2 = paredes.getCell((int) (getX() + demonicReposo.getRegionWidth())/16, (int)(getY()/16));
 
-
-        if(celda1 != null || celda2 != null) {
+        if(celdapared != null || celda2 != null) {
             setPosition(collisionParedesX, collisionParedesY);
         }
 
@@ -220,19 +225,25 @@ public class Demonic extends Actor {
             switch(keycode) {
                 case Input.Keys.DOWN:
                     verticalMovement = VerticalMovement.DOWN;
+                    retrocediendo = false;
                     break;
                 case Input.Keys.UP:
                     verticalMovement = VerticalMovement.UP;
+                    retrocediendo = false;
                     break;
                 case Input.Keys.LEFT:
                     horizontalMovement = HorizontalMovement.LEFT;
+                    retrocediendo = true;
                     break;
                 case Input.Keys.RIGHT:
                     horizontalMovement = HorizontalMovement.RIGHT;
+                    retrocediendo = false;
                     break;
                 case Input.Keys.F:
-                    attackMovement = AttackMovement.BITTING;
-                    estaAtacando = true;
+                    if(retrocediendo == false) {
+                        attackMovement = AttackMovement.BITTING;
+                        estaAtacando = true;
+                    }
                     break;
             }
 
@@ -287,5 +298,8 @@ public class Demonic extends Actor {
 
     public Rectangle getShape() {
         return new Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        /*cuerpo.setPosition((int)getX(), (int)getY());
+        cuerpo.setSize((int)getX(), (int)getY());
+        return cuerpo;*/
     }
 }
