@@ -67,11 +67,6 @@ public class Corazon extends Actor {
 
         stateTime += Gdx.graphics.getDeltaTime();
         actual = movimiento.getKeyFrame(stateTime, true);
-
-        mov1 = Actions.moveTo(reaparicion.x, reaparicion.y + 10, 0.1f, Interpolation.sineIn);
-        mov2 = Actions.moveTo(reaparicion.x, reaparicion.y, 0.1f, Interpolation.sineOut);
-        sequenceAction = Actions.sequence(mov1, mov2);
-        addAction(sequenceAction);
     }
 
     @Override

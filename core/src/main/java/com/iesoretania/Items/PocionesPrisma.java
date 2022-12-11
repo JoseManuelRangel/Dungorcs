@@ -52,7 +52,7 @@ public class PocionesPrisma extends Actor {
         reaparicion = getAparicion(n);
         setPosition(reaparicion.x, reaparicion.y);
         setSize(actual.getRegionWidth() + 8, actual.getRegionHeight() + 8);
-        setVisible(true);
+        setVisible(false);
     }
 
     @Override

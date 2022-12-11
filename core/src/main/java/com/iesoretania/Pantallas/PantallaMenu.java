@@ -63,9 +63,25 @@ public class PantallaMenu extends PantallaBase {
             }
         });
 
+        TextButton botonComoJugar = new TextButton("COMO SE JUEGA", this.game.skin, "default");
+        botonComoJugar.setSize(500, 50);
+        botonComoJugar.setPosition(150, 280);
+        botonComoJugar.addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new PantallaComoseJuega(game));
+                musica.stop();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
+
         TextButton botonSalir = new TextButton("SALIR DEL JUEGO", this.game.skin, "default");
         botonSalir.setSize(500, 50);
-        botonSalir.setPosition(150, 280);
+        botonSalir.setPosition(150, 85);
         botonSalir.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -82,6 +98,7 @@ public class PantallaMenu extends PantallaBase {
 
         stage.addActor(botonJugar);
         stage.addActor(botonControles);
+        stage.addActor(botonComoJugar);
         stage.addActor(botonSalir);
     }
 
@@ -106,7 +123,6 @@ public class PantallaMenu extends PantallaBase {
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override

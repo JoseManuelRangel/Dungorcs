@@ -18,16 +18,18 @@ import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
 public class Enemigo extends Actor {
-    TiledMap mapa;
-    static Animation<TextureRegion> movimiento;
+    private static TextureRegion actual;
     static Texture completo;
     static TextureRegion ene1, ene2, ene3;
-    static TextureRegion[] text_movimiento;
     static Rectangle cuerpo;
-    private TextureRegion actual;
+
+    static Animation<TextureRegion> movimiento;
+    static TextureRegion[] text_movimiento;
 
     float stateTime;
     int num;
+
+    TiledMap mapa;
     Vector2 reaparicion;
     MapLayer posicion;
     MapObject puntoreaparicion;
@@ -40,6 +42,7 @@ public class Enemigo extends Actor {
         this.num = n;
 
         cuerpo = new Rectangle();
+
         completo = new Texture(Gdx.files.internal("dungeon_tileset.png"));
         ene1 = new TextureRegion(completo, 387, 339, 11, 14);
         ene2 = new TextureRegion(completo, 403, 337, 11, 15);
@@ -70,13 +73,6 @@ public class Enemigo extends Actor {
         super.act(delta);
         stateTime += Gdx.graphics.getDeltaTime();
         actual = movimiento.getKeyFrame(stateTime, true);
-
-        /*if(muerto == true) {
-            muerto = false;
-
-            SequenceAction eliminado = Actions.sequence(Actions.fadeOut(1f), Actions.removeActor());
-            addAction(eliminado);
-        }*/
     }
 
     @Override
@@ -178,9 +174,9 @@ public class Enemigo extends Actor {
                 SequenceAction sequence14 = Actions.sequence(p14, s14);
                 return sequence14;
             case 15:
-                MoveToAction p15 = Actions.moveTo(reaparicion.x, reaparicion.y + 50, 1.5f, Interpolation.sine);
-                MoveToAction s15 = Actions.moveTo(reaparicion.x + 100, reaparicion.y + 50, 0.15f, Interpolation.sine);
-                MoveToAction t15 = Actions.moveTo(reaparicion.x, reaparicion.y + 50, 1f, Interpolation.sine);
+                MoveToAction p15 = Actions.moveTo(reaparicion.x, reaparicion.y - 60, 1.5f, Interpolation.sine);
+                MoveToAction s15 = Actions.moveTo(reaparicion.x + 100, reaparicion.y - 60, 0.15f, Interpolation.sine);
+                MoveToAction t15 = Actions.moveTo(reaparicion.x, reaparicion.y - 60, 1f, Interpolation.sine);
                 MoveToAction c15 = Actions.moveTo(reaparicion.x, reaparicion.y, 1.75f, Interpolation.sineOut);
                 SequenceAction sequence15 = Actions.sequence(p15, s15, t15, c15);
                 return sequence15;

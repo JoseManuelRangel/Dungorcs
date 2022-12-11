@@ -54,7 +54,7 @@ public class PantallaJuego extends PantallaBase {
 
     PocionesPrisma pocion1, pocion2, pocion3, pocion4;
 
-    public Music gameMusic;
+    public static Music gameMusic;
     public Sound objective;
 
     public PantallaJuego(Dungorcs game) {
@@ -87,13 +87,11 @@ public class PantallaJuego extends PantallaBase {
         gameMusic.setLooping(true);
         gameMusic.play();
         gameMusic.setVolume(0.5f);
-
         objective.play(1f);
-        paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
-        /*Para cambiar un tile de textura.*/
-        //paredes.getCell(0, 0).setTile(map.getTileSets().getTile(595));
-        protagonista = new Demonic(map);
 
+        paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
+
+        protagonista = new Demonic(map);
         p = new Manager(protagonista, game);
 
 
@@ -172,19 +170,19 @@ public class PantallaJuego extends PantallaBase {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if(protagonista.getX() < camera.position.x - camera.viewportWidth / 2 + 100 && offsetX > 0) {
-            offsetX -= 130 * Gdx.graphics.getDeltaTime();
+            offsetX -= 150 * Gdx.graphics.getDeltaTime();
         }
 
         if(protagonista.getX() + protagonista.getWidth() > camera.position.x + camera.viewportWidth / 2 - 100 && offsetX < mapWidthInPixels - camera.viewportWidth) {
-            offsetX += 130 * Gdx.graphics.getDeltaTime();
+            offsetX += 150 * Gdx.graphics.getDeltaTime();
         }
 
         if(protagonista.getY() < camera.position.y - camera.viewportHeight / 2 + 100 && offsetY > -mapHeightInPixels + camera.viewportHeight) {
-            offsetY -= 130 * Gdx.graphics.getDeltaTime();
+            offsetY -= 150 * Gdx.graphics.getDeltaTime();
         }
 
         if(protagonista.getY() + protagonista.getHeight() > camera.position.y + camera.viewportHeight / 2 - 100 && offsetY < 0) {
-            offsetY += 130 * Gdx.graphics.getDeltaTime();
+            offsetY += 150 * Gdx.graphics.getDeltaTime();
         }
 
 
@@ -252,6 +250,21 @@ public class PantallaJuego extends PantallaBase {
         font.draw(batch, ": " + p.vidasRestantes, 260, 565);
         batch.end();
 
+        if(p.monedasRecogidas > 29 && p.enemigosEliminados > 7) {
+            pocion1.setVisible(true);
+        }
+
+        if(p.monedasRecogidas > 59 && p.enemigosEliminados > 15) {
+            pocion2.setVisible(true);
+        }
+
+        if(p.monedasRecogidas > 89 && p.enemigosEliminados > 23) {
+            pocion3.setVisible(true);
+        }
+
+        if(p.monedasRecogidas > 119 && p.enemigosEliminados == 35) {
+            pocion4.setVisible(true);
+        }
 
         if(p.vidasRestantes == 0) {
             gameMusic.stop();
@@ -260,12 +273,6 @@ public class PantallaJuego extends PantallaBase {
 
     @Override
     public void resize(int width, int height) {
-        /*super.resize(width, height);*/
-
-		/*camera.setToOrtho(false, width, height);
-		camera.position.x = camera.viewportWidth / 2 + offsetX;
-		camera.position.y = mapHeightInPixels - camera.viewportHeight / 2 + offsetY;
-		camera.update();*/
     }
 
     @Override

@@ -16,7 +16,7 @@ public class Moneda extends Actor {
     static Texture completo;
     static TextureRegion[] text_movimiento;
     static Rectangle cuerpo;
-    private TextureRegion actual;
+    private static TextureRegion actual;
     float stateTime;
     int num;
     static TextureRegion mon1, mon2, mon3, mon4;

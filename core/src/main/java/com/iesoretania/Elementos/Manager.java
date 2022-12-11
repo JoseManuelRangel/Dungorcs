@@ -20,14 +20,14 @@ import java.util.Iterator;
 
 public class Manager extends Actor {
     public int enemigosEliminados, monedasRecogidas, vidasRestantes, pocionesPrisma;
+    private Sound coinSound, bittingSound, deathSound, heartSound, gameOverSound, potionSound, winSound;
+
+    Dungorcs game;
     Demonic demonic;
     Enemigo enemigo;
-    Dungorcs game;
     Moneda moneda;
     Corazon corazon;
     PocionesPrisma pocion;
-
-    private Sound coinSound, bittingSound, deathSound, heartSound, gameOverSound;
 
     public Manager(Demonic demonic, Dungorcs game) {
         this.demonic = demonic;
@@ -37,6 +37,14 @@ public class Manager extends Actor {
         monedasRecogidas = 0;
         vidasRestantes = 3;
         pocionesPrisma = 0;
+
+        coinSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/coin_sound.wav"));
+        bittingSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/bite_sound.wav"));
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/death_sound.wav"));
+        heartSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/hearth_sound.wav"));
+        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/gameover_sound.wav"));
+        potionSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/potion_sound.wav"));
+        winSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/win_sound.wav"));
     }
 
     @Override
@@ -47,11 +55,6 @@ public class Manager extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        coinSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/coin_sound.wav"));
-        bittingSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/bite_sound.wav"));
-        deathSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/death_sound.wav"));
-        heartSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/hearth_sound.wav"));
-        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/gameover_sound.wav"));
 
         Iterator<Enemigo> itenemigo = PantallaJuego.enemigos.iterator();
         while(itenemigo.hasNext()) {
@@ -70,11 +73,12 @@ public class Manager extends Actor {
                         vidasRestantes -= 1;
                         demonic.muerto = false;
                         demonic.setVisible(true);
-                        /*deathSound.play();*/
+                        deathSound.play();
                     }
 
                     if(vidasRestantes == 0) {
-                        /*deathSound.stop();*/
+                        PantallaJuego.gameMusic.stop();
+                        deathSound.stop();
                         game.setScreen(new PantallaGameOver(game));
                         gameOverSound.play();
                     }
@@ -115,11 +119,15 @@ public class Manager extends Actor {
 
             if(pocion.isVisible() && Intersector.overlaps(demonic.getShape(), pocion.getShape())) {
                 pocion.addAction(Actions.removeActor());
+                potionSound.play(0.45f);
                 pocion.cogida = true;
                 pocionesPrisma += 1;
                 itpociones.remove();
 
-                if(pocionesPrisma == 4 && monedasRecogidas == 120) {
+                if(pocionesPrisma == 4) {
+                    PantallaJuego.gameMusic.stop();
+                    potionSound.stop();
+                    winSound.play(0.50f);
                     game.setScreen(new PantallaFinal(game));
                 }
             }
