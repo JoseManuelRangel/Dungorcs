@@ -24,7 +24,7 @@ public class Enemigo extends Actor {
     static Rectangle cuerpo;
 
     static Animation<TextureRegion> movimiento;
-    static TextureRegion[] text_movimiento;
+    static TextureRegion[] textMovimiento;
 
     float stateTime;
     int num;
@@ -32,7 +32,7 @@ public class Enemigo extends Actor {
     TiledMap mapa;
     Vector2 reaparicion;
     MapLayer posicion;
-    MapObject puntoreaparicion;
+    MapObject puntoReaparicion;
     SequenceAction secuenciaEnemigo;
 
     public static boolean muerto = false;
@@ -48,12 +48,12 @@ public class Enemigo extends Actor {
         ene2 = new TextureRegion(completo, 403, 337, 11, 15);
         ene3 = new TextureRegion(completo, 371, 334, 11, 18);
 
-        text_movimiento = new TextureRegion[3];
-        text_movimiento[0] = ene1;
-        text_movimiento[1] = ene2;
-        text_movimiento[2] = ene3;
+        textMovimiento = new TextureRegion[3];
+        textMovimiento[0] = ene1;
+        textMovimiento[1] = ene2;
+        textMovimiento[2] = ene3;
 
-        movimiento = new Animation<TextureRegion>(0.1f, text_movimiento);
+        movimiento = new Animation<TextureRegion>(0.1f, textMovimiento);
         stateTime = 0f;
         actual = ene1;
 
@@ -85,9 +85,9 @@ public class Enemigo extends Actor {
         String nummenemigo = String.valueOf(enemy);
         posicion = mapa.getLayers().get("Entidades");
 
-        puntoreaparicion = posicion.getObjects().get("E" + nummenemigo);
+        puntoReaparicion = posicion.getObjects().get("E" + nummenemigo);
 
-        return new Vector2(puntoreaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoreaparicion.getProperties().get("y", Float.class));
+        return new Vector2(puntoReaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoReaparicion.getProperties().get("y", Float.class));
     }
 
     private SequenceAction obtener_patron(int num) {

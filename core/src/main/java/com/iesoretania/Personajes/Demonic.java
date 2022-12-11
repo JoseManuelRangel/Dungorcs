@@ -47,7 +47,7 @@ public class Demonic extends Actor {
     TiledMapTileLayer paredes;
     TiledMap mapa;
     MapLayer posicion;
-    MapObject puntoreaparicion;
+    MapObject puntoReaparicion;
 
 
     static TextureRegion[] texturasAndando, texturasAtaque;
@@ -216,9 +216,9 @@ public class Demonic extends Actor {
 
     private Vector2 getAparicion() {
         posicion = mapa.getLayers().get("Entidades");
-        puntoreaparicion = posicion.getObjects().get("Spawn");
+        puntoReaparicion = posicion.getObjects().get("Spawn");
 
-        return new Vector2(puntoreaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoreaparicion.getProperties().get("y", Float.class));
+        return new Vector2(puntoReaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoReaparicion.getProperties().get("y", Float.class));
     }
 
 

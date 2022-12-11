@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Moneda extends Actor {
     static Texture completo;
-    static TextureRegion[] text_movimiento;
+    static TextureRegion[] textMovimiento;
     static Rectangle cuerpo;
     private static TextureRegion actual;
     float stateTime;
@@ -39,13 +39,13 @@ public class Moneda extends Actor {
         mon3 = new TextureRegion(completo, 307, 273, 2, 7);
         mon4 = new TextureRegion(completo, 314, 273, 4, 7);
 
-        text_movimiento = new TextureRegion[4];
-        text_movimiento[0] = mon1;
-        text_movimiento[1] = mon2;
-        text_movimiento[2] = mon3;
-        text_movimiento[3] = mon4;
+        textMovimiento = new TextureRegion[4];
+        textMovimiento[0] = mon1;
+        textMovimiento[1] = mon2;
+        textMovimiento[2] = mon3;
+        textMovimiento[3] = mon4;
 
-        movimiento = new Animation<TextureRegion>(0.20f, text_movimiento);
+        movimiento = new Animation<TextureRegion>(0.20f, textMovimiento);
         stateTime = 0f;
         actual = mon1;
 

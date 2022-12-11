@@ -86,43 +86,43 @@ public class Manager extends Actor {
             }
         }
 
-        Iterator<Moneda> itmoneda = PantallaJuego.monedas.iterator();
-        while(itmoneda.hasNext()) {
-            moneda = itmoneda.next();
+        Iterator<Moneda> itMoneda = PantallaJuego.monedas.iterator();
+        while(itMoneda.hasNext()) {
+            moneda = itMoneda.next();
 
             if(moneda.isVisible() && Intersector.overlaps(demonic.getShape(), moneda.getShape())) {
                 moneda.addAction(Actions.removeActor());
                 coinSound.play(0.15f);
                 moneda.cogida = true;
                 monedasRecogidas += 1;
-                itmoneda.remove();
+                itMoneda.remove();
             }
         }
 
 
-        Iterator<Corazon> itcorazon = PantallaJuego.corazones.iterator();
-        while(itcorazon.hasNext()) {
-            corazon = itcorazon.next();
+        Iterator<Corazon> itCorazon = PantallaJuego.corazones.iterator();
+        while(itCorazon.hasNext()) {
+            corazon = itCorazon.next();
 
             if(corazon.isVisible() && Intersector.overlaps(demonic.getShape(), corazon.getShape())) {
                 corazon.addAction(Actions.removeActor());
                 heartSound.play(0.50f);
                 corazon.cogido = true;
                 vidasRestantes += 1;
-                itcorazon.remove();
+                itCorazon.remove();
             }
         }
 
-        Iterator<PocionesPrisma> itpociones = PantallaJuego.pociones.iterator();
-        while(itpociones.hasNext()) {
-            pocion = itpociones.next();
+        Iterator<PocionesPrisma> itPociones = PantallaJuego.pociones.iterator();
+        while(itPociones.hasNext()) {
+            pocion = itPociones.next();
 
             if(pocion.isVisible() && Intersector.overlaps(demonic.getShape(), pocion.getShape())) {
                 pocion.addAction(Actions.removeActor());
                 potionSound.play(0.45f);
                 pocion.cogida = true;
                 pocionesPrisma += 1;
-                itpociones.remove();
+                itPociones.remove();
 
                 if(pocionesPrisma == 4) {
                     PantallaJuego.gameMusic.stop();

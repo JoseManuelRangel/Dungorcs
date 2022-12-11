@@ -8,22 +8,16 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
 public class Corazon extends Actor {
     static Animation<TextureRegion> movimiento;
     static Texture completo;
     private TextureRegion actual;
     static TextureRegion cor1, cor2, cor3;
-    static TextureRegion[] cor_movimiento;
-    static MoveToAction mov1, mov2;
-    static SequenceAction sequenceAction;
+    static TextureRegion[] corMovimiento;
     static Rectangle cuerpo;
     public static boolean cogido = false;
     float stateTime;
@@ -32,7 +26,7 @@ public class Corazon extends Actor {
     TiledMap mapa;
     Vector2 reaparicion;
     MapLayer posicion;
-    MapObject puntoreaparicion;
+    MapObject puntoReaparicion;
 
 
     public Corazon(TiledMap map, int n) {
@@ -46,12 +40,12 @@ public class Corazon extends Actor {
         cor2 = new TextureRegion(completo, 305, 258, 13, 12);
         cor3 = new TextureRegion(completo, 321, 258, 13, 12);
 
-        cor_movimiento = new TextureRegion[3];
-        cor_movimiento[0] = cor3;
-        cor_movimiento[1] = cor2;
-        cor_movimiento[2] = cor1;
+        corMovimiento = new TextureRegion[3];
+        corMovimiento[0] = cor3;
+        corMovimiento[1] = cor2;
+        corMovimiento[2] = cor1;
 
-        movimiento = new Animation<TextureRegion>(0.10f, cor_movimiento);
+        movimiento = new Animation<TextureRegion>(0.10f, corMovimiento);
         stateTime = 0f;
         actual = cor1;
 
@@ -78,9 +72,9 @@ public class Corazon extends Actor {
         String numcorazon = String.valueOf(heart);
         posicion = mapa.getLayers().get("Corazones");
 
-        puntoreaparicion = posicion.getObjects().get("C" + numcorazon);
+        puntoReaparicion = posicion.getObjects().get("C" + numcorazon);
 
-        return new Vector2(puntoreaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoreaparicion.getProperties().get("y", Float.class));
+        return new Vector2(puntoReaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoReaparicion.getProperties().get("y", Float.class));
     }
 
     public Rectangle getShape() {
