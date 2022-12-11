@@ -29,8 +29,8 @@ public class Demonic extends Actor {
     HorizontalMovement horizontalMovement;
     VerticalMovement verticalMovement;
     AttackMovement attackMovement;
-
-    Rectangle cuerpo;
+    static Rectangle cuerpo;
+    static Texture completo;
 
     /**
      * statetime: Tiempo que tardará la animación en cuestión en realizarse.
@@ -62,10 +62,10 @@ public class Demonic extends Actor {
      * posicion: Variable que obtendrá la capa de objetos "Objetos" del tilemap.
      * puntoreaparicion: Variable que obtendrá el objeto de reaparición asignado en el tilemap dentro de la capa "Objetos".
      */
-    TextureRegion actual;
+    private TextureRegion actual;
     TiledMapTileLayer paredes, pinchos;
     TiledMap mapa;
-    Vector2 reaparicion;
+    public Vector2 reaparicion;
     MapLayer posicion;
     MapObject puntoreaparicion;
 
@@ -74,21 +74,24 @@ public class Demonic extends Actor {
      * animacionAndando: Animación de movimiento para Demonic.
      * animacionMordiendo: Animación de ataque para Demonic.
      */
-    Animation<TextureRegion> animacionAndando, animacionMordiendo;
+    static TextureRegion[] animacionAnda, animacionMuerde;
+    static Animation<TextureRegion> animacionAndando, animacionMordiendo;
+
+
 
 
     public Demonic(TiledMap map) {
         this.mapa = map;
 
+        cuerpo = new Rectangle();
+
         /**
          * Cargamos la textura completa del tileset usado, obtenemos la capa Paredes del mapa y definimos los TextureRegion
          * que visualizarán el estado del personaje.
          */
-        Texture completo = new Texture(Gdx.files.internal("dungeon_tileset.png"));
+        completo = new Texture(Gdx.files.internal("dungeon_tileset.png"));
         paredes = (TiledMapTileLayer) map.getLayers().get("Paredes");
         pinchos = (TiledMapTileLayer) map.getLayers().get("Pinchos");
-
-        /*cuerpo = new Rectangle();*/
 
         demonicReposo = new TextureRegion(completo, 115, 372, 26, 29);
         demonicCamina1 = new TextureRegion(completo, 148, 369, 22, 28);
@@ -102,11 +105,11 @@ public class Demonic extends Actor {
          *
          * Después se meterán en un objeto de tipo Animation en el que se establecerá el tiempo que tardará en realizar la animación y el Array de TextureRegion que usará.
          */
-        TextureRegion[] animacionAnda = new TextureRegion[2];
+        animacionAnda = new TextureRegion[2];
         animacionAnda[0] = demonicReposo;
         animacionAnda[1] = demonicCamina1;
 
-        TextureRegion[] animacionMuerde = new TextureRegion[3];
+        animacionMuerde = new TextureRegion[3];
         animacionMuerde[0] = demonicCome1;
         animacionMuerde[1] = demonicCome2;
         animacionMuerde[2] = demonicCome3;
@@ -162,19 +165,35 @@ public class Demonic extends Actor {
          * RIGHT: Flecha direccional hacia la derecha.
          */
         if(verticalMovement == VerticalMovement.UP) {
-            this.moveBy(0, 100 * delta);
+            if(attackMovement == AttackMovement.BITTING) {
+                this.moveBy(0, 70 * delta);
+            } else {
+                this.moveBy(0, 130 * delta);
+            }
         }
 
         if(verticalMovement == VerticalMovement.DOWN) {
-            this.moveBy(0, -100 * delta);
+            if(attackMovement == AttackMovement.BITTING) {
+                this.moveBy(0, -70 * delta);
+            } else {
+                this.moveBy(0, -130 * delta);
+            }
         }
 
         if(horizontalMovement == HorizontalMovement.LEFT) {
-            this.moveBy(-100 * delta, 0);
+            if(attackMovement == AttackMovement.BITTING) {
+                this.moveBy(-70 * delta, 0);
+            } else {
+                this.moveBy(-130 * delta, 0);
+            }
         }
 
         if(horizontalMovement == HorizontalMovement.RIGHT) {
-            this.moveBy(100 * delta, 0);
+            if(attackMovement == AttackMovement.BITTING) {
+                this.moveBy(70 * delta, 0);
+            } else {
+                this.moveBy(130 * delta, 0);
+            }
         }
 
 
@@ -199,10 +218,10 @@ public class Demonic extends Actor {
         }
 
 
-        TiledMapTileLayer.Cell celdapared = paredes.getCell((int)getX()/16, (int)getY()/16);
-        TiledMapTileLayer.Cell celda2 = paredes.getCell((int) (getX() + demonicReposo.getRegionWidth())/16, (int)(getY()/16));
+        TiledMapTileLayer.Cell celdaPared = paredes.getCell((int)getX()/16, (int)getY()/16);
+        TiledMapTileLayer.Cell celdaDemonic = paredes.getCell((int) (getX() + demonicReposo.getRegionWidth())/16, (int)(getY()/16));
 
-        if(celdapared != null || celda2 != null) {
+        if(celdaPared != null || celdaDemonic != null) {
             setPosition(collisionParedesX, collisionParedesY);
         }
 
@@ -296,10 +315,9 @@ public class Demonic extends Actor {
         return new Vector2(puntoreaparicion.getProperties().get("x", Float.class) - actual.getRegionWidth() / 2f, puntoreaparicion.getProperties().get("y", Float.class));
     }
 
+
     public Rectangle getShape() {
-        return new Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
-        /*cuerpo.setPosition((int)getX(), (int)getY());
-        cuerpo.setSize((int)getX(), (int)getY());
-        return cuerpo;*/
+        cuerpo.set((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        return cuerpo;
     }
 }

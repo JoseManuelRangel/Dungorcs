@@ -19,11 +19,17 @@ public class PantallaMenu extends PantallaBase {
     private SpriteBatch batch;
     private Texture texture;
 
+    Music musica;
+
 
     public PantallaMenu(Dungorcs game) {
         super(game);
         this.game = game;
         stage = new Stage(new ScreenViewport());
+
+        musica = Gdx.audio.newMusic(Gdx.files.internal("Sounds/menu_music.wav"));
+        musica.setLooping(true);
+        musica.play();
 
         TextButton botonJugar = new TextButton("JUGAR NUEVA PARTIDA", this.game.skin, "default");
         botonJugar.setSize(500, 50);
@@ -32,6 +38,7 @@ public class PantallaMenu extends PantallaBase {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new PantallaJuego(game));
+                musica.stop();
             }
 
             @Override
@@ -47,6 +54,7 @@ public class PantallaMenu extends PantallaBase {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new PantallaControles(game));
+                musica.stop();
             }
 
             @Override
@@ -81,7 +89,7 @@ public class PantallaMenu extends PantallaBase {
     public void show() {
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
-        texture = new Texture(Gdx.files.internal("fondo_menuprincipal.png"));
+        texture = new Texture(Gdx.files.internal("Fondos/fondo_menuprincipal.png"));
     }
 
     @Override

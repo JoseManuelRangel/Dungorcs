@@ -19,9 +19,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
 public class Enemigo extends Actor {
     TiledMap mapa;
-    Animation<TextureRegion> movimiento;
-
-    private TextureRegion ene1, ene2, ene3;
+    static Animation<TextureRegion> movimiento;
+    static Texture completo;
+    static TextureRegion ene1, ene2, ene3;
+    static TextureRegion[] text_movimiento;
+    static Rectangle cuerpo;
     private TextureRegion actual;
 
     float stateTime;
@@ -37,12 +39,13 @@ public class Enemigo extends Actor {
         this.mapa = map;
         this.num = n;
 
-        Texture completo = new Texture(Gdx.files.internal("dungeon_tileset.png"));
+        cuerpo = new Rectangle();
+        completo = new Texture(Gdx.files.internal("dungeon_tileset.png"));
         ene1 = new TextureRegion(completo, 387, 339, 11, 14);
         ene2 = new TextureRegion(completo, 403, 337, 11, 15);
         ene3 = new TextureRegion(completo, 371, 334, 11, 18);
 
-        TextureRegion[] text_movimiento = new TextureRegion[3];
+        text_movimiento = new TextureRegion[3];
         text_movimiento[0] = ene1;
         text_movimiento[1] = ene2;
         text_movimiento[2] = ene3;
@@ -175,9 +178,9 @@ public class Enemigo extends Actor {
                 SequenceAction sequence14 = Actions.sequence(p14, s14);
                 return sequence14;
             case 15:
-                MoveToAction p15 = Actions.moveTo(reaparicion.x + 150, reaparicion.y, 1.5f, Interpolation.sine);
-                MoveToAction s15 = Actions.moveTo((reaparicion.x + 150), reaparicion.y + 50, 1.25f, Interpolation.sine);
-                MoveToAction t15 = Actions.moveTo((reaparicion.x + 150), reaparicion.y, 1f, Interpolation.sine);
+                MoveToAction p15 = Actions.moveTo(reaparicion.x, reaparicion.y + 50, 1.5f, Interpolation.sine);
+                MoveToAction s15 = Actions.moveTo(reaparicion.x + 100, reaparicion.y + 50, 0.15f, Interpolation.sine);
+                MoveToAction t15 = Actions.moveTo(reaparicion.x, reaparicion.y + 50, 1f, Interpolation.sine);
                 MoveToAction c15 = Actions.moveTo(reaparicion.x, reaparicion.y, 1.75f, Interpolation.sineOut);
                 SequenceAction sequence15 = Actions.sequence(p15, s15, t15, c15);
                 return sequence15;
@@ -261,6 +264,7 @@ public class Enemigo extends Actor {
     }
 
     public Rectangle getShape() {
-        return new Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        cuerpo.set((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        return cuerpo;
     }
 }

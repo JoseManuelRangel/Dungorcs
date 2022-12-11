@@ -46,7 +46,7 @@ public class PantallaControles extends PantallaBase {
     public void show() {
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
-        texture = new Texture(Gdx.files.internal("fondo_menucontroles.png"));
+        texture = new Texture(Gdx.files.internal("Fondos/fondo_menucontroles.png"));
     }
 
     @Override
@@ -83,6 +83,6 @@ public class PantallaControles extends PantallaBase {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 }
